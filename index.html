@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample Diner</title>
+<meta name="description" content="Family restaurant. Menu, hours and location.">
+<style>
+  :root {
+    --bg: #fbf7f0;
+    --card: #ffffff;
+    --ink: #2a211b;
+    --muted: #7a6c60;
+    --accent: #b5361f;
+    --accent-dark: #8e2916;
+    --line: #eadfce;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.55;
+  }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.15; }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  /* Demo banner: delete this block (and the #demo div) when the site goes live */
+  #demo { background: #2a211b; color: #fff; text-align: center; font-size: 13px; padding: 8px 12px; }
+
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(251,247,240,.94); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; }
+  .brand { font-family: Georgia, serif; font-weight: 700; font-size: 20px; text-decoration: none; }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { text-decoration: none; font-size: 15px; color: var(--muted); }
+  .nav-links a:hover { color: var(--ink); }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .lang button {
+    border: 0; background: transparent; padding: 6px 12px; font: inherit; font-size: 13px;
+    font-weight: 600; cursor: pointer; color: var(--muted);
+  }
+  .lang button.on { background: var(--ink); color: #fff; }
+
+  .hero { padding: 72px 0 56px; text-align: center; }
+  .hero h1 { font-size: clamp(36px, 7vw, 64px); margin-bottom: 14px; }
+  .hero p { color: var(--muted); font-size: 18px; max-width: 560px; margin: 0 auto 28px; }
+  .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 13px 24px; border-radius: 999px; font-weight: 600;
+    text-decoration: none; border: 2px solid var(--accent); transition: .15s;
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.ghost { color: var(--accent); }
+  .btn.ghost:hover { background: var(--accent); color: #fff; }
+
+  section { padding: 56px 0; }
+  section h2 { font-size: 34px; margin-bottom: 8px; }
+  .sub { color: var(--muted); margin-bottom: 28px; }
+
+  .menu-cat { margin-bottom: 32px; }
+  .menu-cat h3 { font-size: 22px; color: var(--accent); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+  .items { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 6px 36px; }
+  .item { padding: 10px 0; border-bottom: 1px dashed var(--line); }
+  .item-top { display: flex; justify-content: space-between; gap: 12px; font-weight: 600; }
+  .item-desc { color: var(--muted); font-size: 14px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .card h3 { font-size: 20px; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  td:last-child { text-align: right; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+  .contact-line { margin: 8px 0; }
+  .contact-line b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  iframe { width: 100%; height: 300px; border: 0; border-radius: var(--radius); margin-top: 18px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  .call-bar {
+    display: none; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20;
+    background: var(--accent); color: #fff; text-align: center; padding: 14px;
+    border-radius: 999px; font-weight: 700; text-decoration: none; box-shadow: 0 6px 20px rgba(0,0,0,.25);
+  }
+
+  @media (max-width: 720px) {
+    .nav-links a { display: none; }
+    .grid2 { grid-template-columns: 1fr; }
+    .hero { padding: 48px 0 36px; }
+    .call-bar { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<div id="demo">Preview / Demo — this is a sample website prepared for the owner's review. / Демо-версия — образец сайта для владельца.</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" id="brand"></a>
+    <nav class="nav-links">
+      <a href="#menu" data-i18n="nav_menu"></a>
+      <a href="#hours" data-i18n="nav_hours"></a>
+      <a href="#contact" data-i18n="nav_contact"></a>
+      <div class="lang" role="group" aria-label="Language">
+        <button data-lang="en">EN</button>
+        <button data-lang="ru">RU</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero wrap">
+    <h1 id="hero-title"></h1>
+    <p id="hero-sub"></p>
+    <div class="btns">
+      <a class="btn primary" id="btn-call" href="#"></a>
+      <a class="btn ghost" id="btn-dir" href="#" target="_blank" rel="noopener"></a>
+    </div>
+  </div>
+
+  <section id="menu">
+    <div class="wrap">
+      <h2 data-i18n="menu_title"></h2>
+      <p class="sub" data-i18n="menu_sub"></p>
+      <div id="menu-list"></div>
+    </div>
+  </section>
+
+  <section id="hours">
+    <div class="wrap grid2">
+      <div class="card">
+        <h3 data-i18n="hours_title"></h3>
+        <table id="hours-table"></table>
+      </div>
+      <div class="card" id="contact">
+        <h3 data-i18n="contact_title"></h3>
+        <div class="contact-line"><b data-i18n="address"></b><span id="c-address"></span></div>
+        <div class="contact-line"><b data-i18n="phone"></b><a id="c-phone" href="#"></a></div>
+        <div class="contact-line" id="c-email-row"><b>Email</b><a id="c-email" href="#"></a></div>
+        <iframe id="map" loading="lazy" title="Map"></iframe>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© <span id="year"></span> <span id="foot-name"></span></div>
+</footer>
+
+<a class="call-bar" id="call-bar" href="#"></a>
+
+<script>
+/* ============================================================
+   EDIT ONLY THIS BLOCK FOR EACH NEW CLIENT
+   Every text has an English (en) and a Russian (ru) version.
+   ============================================================ */
+const CONFIG = {
+  name: "Sample Diner",
+  phone: "+1 555-010-0123",
+  email: "hello@example.com",           // leave "" to hide
+  address: "123 Main St, Columbus, OH 43215",
+  mapQuery: "123 Main St, Columbus, OH 43215",
+
+  tagline: {
+    en: "Homemade food, friendly faces, and coffee that never runs out.",
+    ru: "Домашняя кухня, дружелюбная атмосфера и кофе без ограничений."
+  },
+
+  hours: [
+    { day: { en: "Monday",    ru: "Понедельник" }, time: { en: "Closed",          ru: "Выходной" } },
+    { day: { en: "Tuesday",   ru: "Вторник" },     time: { en: "7:00 AM – 3:00 PM", ru: "7:00 – 15:00" } },
+    { day: { en: "Wednesday", ru: "Среда" },       time: { en: "7:00 AM – 3:00 PM", ru: "7:00 – 15:00" } },
+    { day: { en: "Thursday",  ru: "Четверг" },     time: { en: "7:00 AM – 3:00 PM", ru: "7:00 – 15:00" } },
+    { day: { en: "Friday",    ru: "Пятница" },     time: { en: "7:00 AM – 8:00 PM", ru: "7:00 – 20:00" } },
+    { day: { en: "Saturday",  ru: "Суббота" },     time: { en: "8:00 AM – 8:00 PM", ru: "8:00 – 20:00" } },
+    { day: { en: "Sunday",    ru: "Воскресенье" }, time: { en: "8:00 AM – 2:00 PM", ru: "8:00 – 14:00" } }
+  ],
+
+  menu: [
+    {
+      title: { en: "Breakfast", ru: "Завтраки" },
+      items: [
+        { name: { en: "Classic Two-Egg Plate", ru: "Классика: два яйца" }, desc: { en: "Eggs your way, home fries, toast", ru: "Яйца на выбор, жареный картофель, тост" }, price: "$9.50" },
+        { name: { en: "Fluffy Pancakes", ru: "Пышные панкейки" }, desc: { en: "Stack of three with butter and syrup", ru: "Три штуки с маслом и сиропом" }, price: "$8.00" },
+        { name: { en: "Breakfast Burrito", ru: "Буррито на завтрак" }, desc: { en: "Eggs, cheese, peppers, sausage", ru: "Яйца, сыр, перец, колбаса" }, price: "$10.50" }
+      ]
+    },
+    {
+      title: { en: "Lunch", ru: "Обед" },
+      items: [
+        { name: { en: "Cheeseburger & Fries", ru: "Чизбургер с картофелем фри" }, desc: { en: "Half-pound beef patty, American cheese", ru: "Говяжья котлета 225 г, американский сыр" }, price: "$12.00" },
+        { name: { en: "Club Sandwich", ru: "Клаб-сэндвич" }, desc: { en: "Turkey, bacon, lettuce, tomato", ru: "Индейка, бекон, салат, помидор" }, price: "$11.50" },
+        { name: { en: "Soup of the Day", ru: "Суп дня" }, desc: { en: "Ask your server", ru: "Уточняйте у официанта" }, price: "$5.50" }
+      ]
+    },
+    {
+      title: { en: "Drinks & Dessert", ru: "Напитки и десерты" },
+      items: [
+        { name: { en: "Fresh Coffee", ru: "Свежий кофе" }, desc: { en: "Free refills", ru: "Добавка бесплатно" }, price: "$2.50" },
+        { name: { en: "Milkshake", ru: "Молочный коктейль" }, desc: { en: "Vanilla, chocolate or strawberry", ru: "Ваниль, шоколад или клубника" }, price: "$6.00" },
+        { name: { en: "Apple Pie", ru: "Яблочный пирог" }, desc: { en: "Warm, with vanilla ice cream", ru: "Тёплый, с ванильным мороженым" }, price: "$6.50" }
+      ]
+    }
+  ]
+};
+
+/* Fixed interface texts (usually no need to edit) */
+const UI = {
+  en: {
+    nav_menu: "Menu", nav_hours: "Hours", nav_contact: "Contact",
+    menu_title: "Our Menu", menu_sub: "Prices may change. Ask us about daily specials.",
+    hours_title: "Opening Hours", contact_title: "Find Us",
+    address: "Address", phone: "Phone",
+    call: "Call us", directions: "Get directions"
+  },
+  ru: {
+    nav_menu: "Меню", nav_hours: "Часы работы", nav_contact: "Контакты",
+    menu_title: "Наше меню", menu_sub: "Цены могут меняться. Спрашивайте о блюдах дня.",
+    hours_title: "Часы работы", contact_title: "Как нас найти",
+    address: "Адрес", phone: "Телефон",
+    call: "Позвонить", directions: "Построить маршрут"
+  }
+};
+
+/* ============================================================
+   Engine — no need to edit below
+   ============================================================ */
+const $ = (s) => document.querySelector(s);
+const tel = "tel:" + CONFIG.phone.replace(/[^+\d]/g, "");
+let lang = "en";
+
+try {
+  const saved = localStorage.getItem("lang");
+  if (saved === "en" || saved === "ru") lang = saved;
+  else if ((navigator.language || "").toLowerCase().startsWith("ru")) lang = "ru";
+} catch (e) {
+  if ((navigator.language || "").toLowerCase().startsWith("ru")) lang = "ru";
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function render() {
+  const t = UI[lang];
+  document.documentElement.lang = lang;
+  document.title = CONFIG.name + " — " + (lang === "ru" ? "Меню и контакты" : "Menu & Hours");
+
+  document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t[el.dataset.i18n]; });
+  document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("on", b.dataset.lang === lang));
+
+  $("#brand").textContent = CONFIG.name;
+  $("#foot-name").textContent = CONFIG.name;
+  $("#hero-title").textContent = CONFIG.name;
+  $("#hero-sub").textContent = CONFIG.tagline[lang];
+
+  $("#btn-call").textContent = "📞 " + t.call;
+  $("#btn-call").href = tel;
+  $("#btn-dir").textContent = "📍 " + t.directions;
+  $("#btn-dir").href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(CONFIG.mapQuery);
+  $("#call-bar").textContent = "📞 " + t.call + " · " + CONFIG.phone;
+  $("#call-bar").href = tel;
+
+  $("#menu-list").innerHTML = CONFIG.menu.map((cat) => `
+    <div class="menu-cat">
+      <h3>${esc(cat.title[lang])}</h3>
+      <div class="items">
+        ${cat.items.map((i) => `
+          <div class="item">
+            <div class="item-top"><span>${esc(i.name[lang])}</span><span>${esc(i.price)}</span></div>
+            <div class="item-desc">${esc(i.desc[lang])}</div>
+          </div>`).join("")}
+      </div>
+    </div>`).join("");
+
+  $("#hours-table").innerHTML = CONFIG.hours
+    .map((h) => `<tr><td>${esc(h.day[lang])}</td><td>${esc(h.time[lang])}</td></tr>`).join("");
+
+  $("#c-address").textContent = CONFIG.address;
+  $("#c-phone").textContent = CONFIG.phone;
+  $("#c-phone").href = tel;
+  if (CONFIG.email) {
+    $("#c-email").textContent = CONFIG.email;
+    $("#c-email").href = "mailto:" + CONFIG.email;
+  } else {
+    $("#c-email-row").style.display = "none";
+  }
+
+  const mapSrc = "https://maps.google.com/maps?q=" + encodeURIComponent(CONFIG.mapQuery) + "&hl=" + lang + "&z=15&output=embed";
+  if ($("#map").getAttribute("src") !== mapSrc) $("#map").setAttribute("src", mapSrc);
+  $("#year").textContent = new Date().getFullYear();
+}
+
+document.querySelectorAll(".lang button").forEach((b) => {
+  b.addEventListener("click", () => {
+    lang = b.dataset.lang;
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
